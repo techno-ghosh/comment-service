@@ -23,10 +23,17 @@ def post(id):
     # Get user info from User Service
     if comment_info:
         
-        post_response = requests.get(f'http://localhost:5001/post/{comment_info["post_id"]}')
-        
+        post_response = requests.get(f'https://postservicewebappversiontwo.azurewebsites.net/post/{comment_info["post_id"]}')
         if post_response.status_code == 200:
             comment_info['post'] = post_response.json()
+        else:
+            comment_info['post_response'] = post_response.status_code
+            
+        user_response = requests.get(f'https://postservicewebappversiontwo.azurewebsites.net/user/{comment_info["user_id"]}')
+        if user_response.status_code == 200:
+            comment_info['user'] = user_response.json()
+        else:
+            comment_info['user_response'] = user_response.status_code
 
     return jsonify(comment_info)
 
@@ -37,12 +44,12 @@ def create():
     post_id = request.json['post_id']
     user_id = request.json['user_id']
     comment = request.json['comment']
-    response = requests.get(f'http://localhost:5001/post/{post_id}')
+    response = requests.get(f'https://postservicewebappversiontwo.azurewebsites.net/post/{post_id}')
     
     if response.status_code != 200:
         return 'Post not found',404
     
-    user_response = requests.get(f'http://localhost:5000/user/{user_id}')
+    user_response = requests.get(f'https://webappsfromlocalnirmalghosh.azurewebsites.net/user/{user_id}')
     
     if user_response.status_code != 200:
         return 'User not found',404
